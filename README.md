@@ -1,5 +1,7 @@
 # PixCerto
 
+**[Abrir a demonstracao](https://paulo-carvalho10.github.io/pixcerto/)**
+
 Gerador e conferidor de cobranca Pix que roda inteiramente no navegador.
 Implementa o BR Code (padrao EMV MPM, perfil Pix do Banco Central) do zero:
 montagem dos campos, CRC16 e leitura de volta.
@@ -22,7 +24,8 @@ rede, nao ha telemetria. Todo o calculo acontece em memoria.
 
 ## Estado
 
-MVP completo e testado. Falta publicar.
+MVP completo, testado e publicado em
+<https://paulo-carvalho10.github.io/pixcerto/>.
 
 | Etapa | Situacao |
 |---|---|
@@ -35,8 +38,8 @@ MVP completo e testado. Falta publicar.
 | QR em PNG e SVG | pronto |
 | Cartaz A4 e PDF | pronto |
 | Geracao em lote | pronto |
-| Captura da interface | pendente |
-| Deploy | pendente |
+| Captura da interface | pronto |
+| Deploy | pronto |
 
 131 testes automatizados, typecheck estrito sem erros.
 
