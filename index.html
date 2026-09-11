@@ -39,6 +39,9 @@
       <button type="button" class="aba" data-aba="gerar" aria-selected="true">
         Gerar cobrança
       </button>
+      <button type="button" class="aba" data-aba="lote" aria-selected="false">
+        Vários valores
+      </button>
       <button type="button" class="aba" data-aba="conferir" aria-selected="false">
         Conferir um código
       </button>
@@ -211,6 +214,52 @@
 
           <p class="resultado__vazio" data-vazio>
             Preencha a chave, o nome e a cidade para ver o QR Code aparecer aqui.
+          </p>
+        </aside>
+      </section>
+
+      <!-- -------------------------------- LOTE ------------------------------- -->
+      <section class="painel" data-painel="lote" hidden>
+        <form class="formulario" id="formularioLote" novalidate>
+          <h2 class="formulario__titulo">Um código para cada valor</h2>
+          <p class="formulario__apoio">
+            Usa o recebedor preenchido na aba <strong>Gerar cobrança</strong>. Útil para uma
+            tabela de preços, mensalidades ou uma rifa: cada valor vira um QR próprio.
+          </p>
+
+          <div class="campo">
+            <label for="valores">Valores</label>
+            <textarea
+              id="valores"
+              name="valores"
+              rows="8"
+              spellcheck="false"
+              placeholder="25,00&#10;45,00;CORTE&#10;70,00;CORTE E BARBA"
+            ></textarea>
+            <p class="ajuda">
+              Um por linha. Depois de um ponto e vírgula, um identificador opcional.
+            </p>
+          </div>
+
+          <button type="button" class="botao botao--fantasma" id="exemploLote">
+            Preencher com uma tabela de exemplo
+          </button>
+        </form>
+
+        <aside class="resultado" aria-live="polite">
+          <div class="resultado__erro" data-loteErro hidden></div>
+
+          <div class="acoes" data-loteAcoes hidden>
+            <button type="button" class="botao botao--primario" data-loteAcao="cartazes">
+              Cartazes A4 / PDF
+            </button>
+            <button type="button" class="botao" data-loteAcao="png">Baixar os PNG</button>
+          </div>
+
+          <div class="grade" data-loteGrade></div>
+
+          <p class="resultado__vazio" data-loteVazio>
+            Preencha o recebedor na primeira aba e liste os valores aqui.
           </p>
         </aside>
       </section>

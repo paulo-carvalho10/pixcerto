@@ -1,4 +1,5 @@
 import './styles.css';
+import { iniciarLote } from './ui/batch.js';
 import { iniciarConferidor } from './ui/checker.js';
 import { el, mostrar, todos } from './ui/dom.js';
 import { iniciarGerador } from './ui/generator.js';
@@ -29,5 +30,6 @@ function mostrarVersao(): void {
 
 iniciarAbas();
 iniciarGerador();
+iniciarLote();
 iniciarConferidor();
 mostrarVersao();
