@@ -7,10 +7,20 @@ montagem dos campos, CRC16 e leitura de volta.
 **A chave Pix nunca sai do dispositivo.** Nao ha back-end, nao ha requisicao de
 rede, nao ha telemetria. Todo o calculo acontece em memoria.
 
+## O que ele faz
+
+- Gera o "Pix copia e cola" e o QR Code enquanto voce digita.
+- Aceita as cinco formas de chave, com validacao de digito verificador de CPF e
+  CNPJ.
+- Exporta PNG, SVG e um cartaz A4 pronto para imprimir ou salvar como PDF.
+- Gera um codigo para cada valor de uma lista, para tabela de precos ou
+  mensalidades.
+- Confere um codigo recebido: mostra a arvore de campos, explica cada ID e diz
+  se o CRC16 fecha.
+
 ## Estado
 
-Em construcao. O nucleo do BR Code esta pronto e testado; a interface e as
-exportacoes ainda nao.
+MVP completo e testado. Falta publicar.
 
 | Etapa | Situacao |
 |---|---|
@@ -19,10 +29,14 @@ exportacoes ainda nao.
 | Montagem do payload | pronto |
 | Validacao de chave, valor e texto | pronto |
 | Decodificador com arvore de campos | pronto |
-| Interface | pendente |
-| QR em PNG e SVG | pendente |
-| Cartaz A4 e PDF | pendente |
+| Interface responsiva | pronto |
+| QR em PNG e SVG | pronto |
+| Cartaz A4 e PDF | pronto |
+| Geracao em lote | pronto |
+| Captura da interface | pendente |
 | Deploy | pendente |
+
+131 testes automatizados, typecheck estrito sem erros.
 
 ## Como rodar
 
@@ -30,9 +44,24 @@ Requer Node 20 ou superior.
 
 ```bash
 npm install
-npm test         # suite completa
+npm run dev       # servidor de desenvolvimento
+npm test          # suite completa
 npm run typecheck
+npm run build     # typecheck e build de producao em dist/
+npm run preview   # serve o build de producao
 ```
+
+## Deploy
+
+O fluxo em `.github/workflows/deploy.yml` roda typecheck, testes e build a cada
+push, e publica no GitHub Pages a partir da `main`. Um pull request roda a
+verificacao mas nao publica.
+
+Para ativar: em **Settings > Pages** do repositorio, escolher **GitHub Actions**
+como origem.
+
+Como o `base` do Vite e relativo, o mesmo build funciona tambem no Cloudflare
+Pages ou em qualquer hospedagem estatica, sem alterar configuracao.
 
 ## O que e o BR Code
 
@@ -104,12 +133,33 @@ que o formato permite.
 **O decodificador existe para provar o gerador.** Se
 `decodePix(buildPixPayload(x))` nao devolve `x`, uma das duas metades esta
 errada. Esse teste de ida e volta cobre nove combinacoes de entrada e nao
-depende de nenhum aplicativo de banco para rodar.
+depende de nenhum aplicativo de banco para rodar. A arvore de campos mostrada na
+tela tambem vem dele, e nao de um segundo caminho de montagem: o que aparece e o
+resultado de ler de volta o proprio codigo gerado.
+
+**Interface sem framework.** Sao dois formularios e um painel de resultado.
+TypeScript e DOM direto resolvem isso em menos codigo do que a configuracao de
+uma biblioteca de componentes, e o bundle fica em 20 kB comprimidos com a
+biblioteca de QR incluida. Um teste de fiacao com happy-dom carrega o
+`index.html` de verdade e digita nos campos, para pegar o que o typecheck nao ve:
+seletor renomeado, atributo errado, evento que parou de disparar.
+
+**PNG desenhado em canvas, nao convertido do SVG.** Converter passaria por
+carregar uma imagem e esbarraria em diferencas de suavizacao entre navegadores.
+Desenhar retangulo a retangulo, com escala inteira, garante modulo de borda
+exata, que e o que um leitor de QR precisa.
+
+**PDF pela impressao do navegador.** O cartaz A4 abre em janela propria com a
+sua propria folha de estilo, e o dialogo de impressao de qualquer navegador atual
+oferece "Salvar como PDF". Uma biblioteca de geracao de PDF acrescentaria algumas
+centenas de kilobytes para produzir o mesmo arquivo.
 
 ## Avisos
 
 - Um QR estatico **nao confirma pagamento**. Conferir o recebimento no extrato e
   responsabilidade de quem cobra.
+- O botao de WhatsApp abre o compartilhamento **sem numero de destino**: quem
+  escolhe o contato e a pessoa, e nada e enviado automaticamente.
 - A validacao e de formato e de digito verificador. Uma chave bem formada pode
   simplesmente nao existir; isso so o DICT responde, e este projeto nao consulta
   servico nenhum.
