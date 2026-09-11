@@ -7,6 +7,8 @@ montagem dos campos, CRC16 e leitura de volta.
 **A chave Pix nunca sai do dispositivo.** Nao ha back-end, nao ha requisicao de
 rede, nao ha telemetria. Todo o calculo acontece em memoria.
 
+![Tela de geração: formulário à esquerda, QR Code e Pix copia e cola à direita](docs/gerar.png)
+
 ## O que ele faz
 
 - Gera o "Pix copia e cola" e o QR Code enquanto voce digita.
@@ -38,6 +40,24 @@ MVP completo e testado. Falta publicar.
 
 131 testes automatizados, typecheck estrito sem erros.
 
+## Telas
+
+**Um código para cada valor**, a partir de uma lista de precos:
+
+![Aba de vários valores, com um QR Code para cada preço da tabela](docs/lote.png)
+
+**Conferência de um código recebido**, com a árvore de campos e o veredito do
+CRC:
+
+![Aba de conferência, mostrando resumo do código e a tabela de campos TLV](docs/conferir.png)
+
+No celular e no tema escuro do sistema:
+
+<p>
+  <img src="docs/celular.png" alt="A mesma tela de geração em largura de celular" width="240">
+  <img src="docs/escuro.png" alt="Tela de geração no tema escuro" width="430">
+</p>
+
 ## Como rodar
 
 Requer Node 20 ou superior.
@@ -50,6 +70,21 @@ npm run typecheck
 npm run build     # typecheck e build de producao em dist/
 npm run preview   # serve o build de producao
 ```
+
+Para refazer as capturas do README, com o `preview` rodando em outro terminal:
+
+```bash
+npx playwright install chromium   # uma vez
+npm run capturas
+```
+
+O script nao so fotografa: ele abre um Chromium de verdade e confere que o QR
+renderiza, que nao ha erro no console, que a pagina nao rola na horizontal em
+390px e que apenas um painel fica visivel por aba. Essa ultima checagem existe
+porque um defeito real passou pelos testes de DOM: `happy-dom` nao calcula
+estilo, entao o teste via o atributo `hidden` no lugar certo enquanto, no
+navegador, `.painel { display: grid }` vencia a regra de `[hidden]` e deixava os
+tres paineis empilhados na tela.
 
 ## Deploy
 
