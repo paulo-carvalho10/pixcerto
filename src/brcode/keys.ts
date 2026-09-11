@@ -81,7 +81,7 @@ export function normalizePixKey(raw: string, expected?: PixKeyType): NormalizedP
     );
   }
 
-  const normalizada = normalizarPorTipo(texto, tipo);
+  const normalizada = normalizarComAmbiguidade(raw, texto, tipo, expected);
 
   if (normalizada.value.length > MAX_KEY_LENGTH) {
     throw new BrCodeError(
@@ -102,6 +102,32 @@ export function tryNormalizePixKey(
   } catch (erro) {
     if (erro instanceof BrCodeError) {
       return { ok: false, message: erro.message };
+    }
+    throw erro;
+  }
+}
+
+/**
+ * Onze digitos puros servem tanto a um CPF quanto a um celular com DDD. Quando
+ * o tipo foi deduzido e a entrada nao fecha em nenhum dos dois, repetir a
+ * mensagem do palpite confunde: quem errou um digito do CPF leria uma
+ * reclamacao sobre celular. Nesse caso a mensagem cita as duas leituras.
+ */
+function normalizarComAmbiguidade(
+  raw: string,
+  texto: string,
+  tipo: PixKeyType,
+  expected: PixKeyType | undefined,
+): NormalizedPixKey {
+  try {
+    return normalizarPorTipo(texto, tipo);
+  } catch (erro) {
+    const ambiguo = expected === undefined && /^\d{11}$/.test(somenteDigitos(texto));
+    if (ambiguo && erro instanceof BrCodeError) {
+      throw new BrCodeError(
+        `"${raw}" tem 11 digitos, mas nao e um CPF valido (o digito verificador nao ` +
+          'confere) nem um celular valido. Confira os numeros ou escolha o tipo da chave.',
+      );
     }
     throw erro;
   }
