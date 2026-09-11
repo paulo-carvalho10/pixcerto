@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <title>PixCerto — gerador de cobrança Pix no navegador</title>
+    <meta
+      name="description"
+      content="Gere e confira cobranças Pix (BR Code) sem servidor. A chave nunca sai do seu dispositivo."
+    />
+  </head>
+  <body>
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="cabecalho">
+      <div class="faixa">
+        <div class="marca">
+          <svg class="marca__icone" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="2" y="2" width="10" height="10" rx="2" />
+            <rect x="20" y="2" width="10" height="10" rx="2" />
+            <rect x="2" y="20" width="10" height="10" rx="2" />
+            <rect x="20" y="20" width="4" height="4" rx="1" />
+            <rect x="26" y="26" width="4" height="4" rx="1" />
+          </svg>
+          <div>
+            <span class="marca__nome">PixCerto</span>
+            <span class="marca__frase">Cobrança Pix conferida, sem servidor</span>
+          </div>
+        </div>
+        <p class="selo" role="note">
+          <strong>Tudo roda no seu navegador.</strong>
+          A chave Pix não é enviada para lugar nenhum.
+        </p>
+      </div>
+    </header>
+
+    <nav class="abas" aria-label="Seções">
+      <button type="button" class="aba" data-aba="gerar" aria-selected="true">
+        Gerar cobrança
+      </button>
+      <button type="button" class="aba" data-aba="conferir" aria-selected="false">
+        Conferir um código
+      </button>
+    </nav>
+
+    <main id="conteudo">
+      <!-- ------------------------------- GERAR ------------------------------ -->
+      <section class="painel" data-painel="gerar">
+        <form class="formulario" id="formulario" novalidate>
+          <h2 class="formulario__titulo">Dados da cobrança</h2>
+
+          <div class="campo">
+            <label for="chave">Chave Pix</label>
+            <div class="campo__linha">
+              <input
+                type="text"
+                id="chave"
+                name="chave"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="CPF, CNPJ, telefone, e-mail ou chave aleatória"
+                required
+              />
+              <select id="tipoChave" name="tipoChave" aria-label="Tipo da chave">
+                <option value="">Detectar</option>
+                <option value="cpf">CPF</option>
+                <option value="cnpj">CNPJ</option>
+                <option value="phone">Telefone</option>
+                <option value="email">E-mail</option>
+                <option value="random">Aleatória</option>
+              </select>
+            </div>
+            <p class="ajuda" data-ajuda="chave"></p>
+          </div>
+
+          <div class="campo">
+            <label for="nome">Nome do recebedor</label>
+            <input
+              type="text"
+              id="nome"
+              name="nome"
+              autocomplete="off"
+              maxlength="60"
+              placeholder="Como aparece para quem paga"
+              required
+            />
+            <p class="ajuda" data-contador="nome">0 de 25 caracteres</p>
+          </div>
+
+          <div class="campo">
+            <label for="cidade">Cidade</label>
+            <input
+              type="text"
+              id="cidade"
+              name="cidade"
+              autocomplete="off"
+              maxlength="40"
+              placeholder="Cidade do recebedor"
+              required
+            />
+            <p class="ajuda" data-contador="cidade">0 de 15 caracteres</p>
+          </div>
+
+          <div class="campo">
+            <label for="valor">Valor <span class="opcional">opcional</span></label>
+            <input
+              type="text"
+              id="valor"
+              name="valor"
+              inputmode="decimal"
+              autocomplete="off"
+              placeholder="Em branco, quem paga escolhe o valor"
+            />
+            <p class="ajuda" data-ajuda="valor"></p>
+          </div>
+
+          <div class="campo">
+            <label for="txid">Identificador <span class="opcional">opcional</span></label>
+            <input
+              type="text"
+              id="txid"
+              name="txid"
+              autocomplete="off"
+              maxlength="40"
+              placeholder="Ex.: PEDIDO1234"
+            />
+            <p class="ajuda">Só letras e números, até 25 caracteres. Aparece no seu extrato.</p>
+          </div>
+
+          <details class="avancado">
+            <summary>Campos avançados</summary>
+
+            <div class="campo">
+              <label for="descricao">Descrição</label>
+              <input
+                type="text"
+                id="descricao"
+                name="descricao"
+                autocomplete="off"
+                maxlength="80"
+                placeholder="Alguns aplicativos mostram este texto"
+              />
+              <p class="ajuda" data-ajuda="descricao"></p>
+            </div>
+
+            <div class="campo">
+              <label for="cep">CEP</label>
+              <input
+                type="text"
+                id="cep"
+                name="cep"
+                inputmode="numeric"
+                autocomplete="off"
+                maxlength="9"
+                placeholder="00000-000"
+              />
+            </div>
+
+            <label class="caixa">
+              <input type="checkbox" id="usoUnico" name="usoUnico" />
+              <span>
+                Marcar como uso único
+                <small>O código passa a valer para um pagamento só.</small>
+              </span>
+            </label>
+          </details>
+
+          <button type="button" class="botao botao--fantasma" id="exemplo">
+            Preencher com dados de exemplo
+          </button>
+        </form>
+
+        <!-- --------------------------- RESULTADO --------------------------- -->
+        <aside class="resultado" aria-live="polite">
+          <div class="resultado__erro" data-erro hidden></div>
+
+          <div class="resultado__conteudo" data-conteudo hidden>
+            <figure class="qr">
+              <div class="qr__imagem" data-qr></div>
+              <figcaption class="qr__legenda" data-legenda></figcaption>
+            </figure>
+
+            <div class="campo">
+              <label for="payload">Pix copia e cola</label>
+              <textarea id="payload" data-payload readonly rows="4" spellcheck="false"></textarea>
+            </div>
+
+            <div class="acoes">
+              <button type="button" class="botao botao--primario" data-acao="copiar">
+                Copiar código
+              </button>
+              <button type="button" class="botao" data-acao="png">Baixar PNG</button>
+              <button type="button" class="botao" data-acao="svg">Baixar SVG</button>
+              <button type="button" class="botao" data-acao="cartaz">Cartaz A4</button>
+              <button type="button" class="botao" data-acao="whatsapp">WhatsApp</button>
+            </div>
+
+            <ul class="avisos" data-avisos hidden></ul>
+
+            <details class="detalhe">
+              <summary>Ver os campos deste código</summary>
+              <div data-campos></div>
+            </details>
+
+            <p class="alerta">
+              Um QR estático <strong>não confirma pagamento</strong>. Confira o recebimento no seu
+              extrato antes de entregar produto ou serviço.
+            </p>
+          </div>
+
+          <p class="resultado__vazio" data-vazio>
+            Preencha a chave, o nome e a cidade para ver o QR Code aparecer aqui.
+          </p>
+        </aside>
+      </section>
+
+      <!-- ------------------------------ CONFERIR ----------------------------- -->
+      <section class="painel" data-painel="conferir" hidden>
+        <form class="formulario" id="formularioConferir" novalidate>
+          <h2 class="formulario__titulo">Conferir um código Pix</h2>
+          <p class="formulario__apoio">
+            Cole um "Pix copia e cola" para ver todos os campos, o que cada um significa e se o
+            CRC16 confere. A leitura também acontece só no seu navegador.
+          </p>
+
+          <div class="campo">
+            <label for="codigo">Código Pix</label>
+            <textarea
+              id="codigo"
+              name="codigo"
+              rows="6"
+              spellcheck="false"
+              placeholder="00020126580014br.gov.bcb.pix..."
+            ></textarea>
+          </div>
+
+          <button type="button" class="botao botao--fantasma" id="exemploConferir">
+            Usar um código de exemplo
+          </button>
+        </form>
+
+        <aside class="resultado" aria-live="polite">
+          <div data-conferir></div>
+          <p class="resultado__vazio" data-conferirVazio>
+            O resultado da análise aparece aqui.
+          </p>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <p>
+        <strong>PixCerto</strong>
+        <span data-versao></span>
+      </p>
+      <p>
+        BR Code e CRC16 implementados do zero, sem back-end.
+        <a href="https://github.com/paulo-carvalho10/pixcerto">Código no GitHub</a>
+      </p>
+      <p class="rodape__nota">
+        Projeto de estudo, sem vínculo com o Banco Central do Brasil.
+      </p>
+    </footer>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
