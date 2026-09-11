@@ -21,7 +21,9 @@ import { abrirCartazes } from './poster.js';
  * discordam sobre quem esta cobrando.
  */
 
-const EXEMPLO = ['25,00;CABELO', '45,00;CORTE', '70,00;CORTE E BARBA', '15,00;SOBRANCELHA'].join(
+// Identificadores sem espaco de proposito: o padrao so aceita letras e digitos
+// no txid, e um exemplo com espaco sairia saneado na tela como "CORTEEBARBA".
+const EXEMPLO = ['25,00;CABELO', '45,00;CORTE', '70,00;CORTEBARBA', '15,00;SOBRANCELHA'].join(
   '\n',
 );
 

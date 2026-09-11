@@ -57,6 +57,14 @@
   box-sizing: border-box;
 }
 
+/* A regra do navegador para [hidden] e display:none com especificidade baixa,
+   entao qualquer `display` declarado numa classe a vence. `.painel` usa
+   display:grid e, sem esta linha, os tres paineis apareceriam empilhados com o
+   atributo hidden presente e sem efeito. */
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -268,7 +276,11 @@ a {
 }
 
 .campo__linha select {
+  /* A largura automatica e necessaria: a regra geral abaixo poe width:100% em
+     todo select, e com flex-shrink 0 ele pediria a linha inteira e esmagaria o
+     input ao lado. */
   flex: 0 0 auto;
+  width: auto;
 }
 
 input[type='text'],
